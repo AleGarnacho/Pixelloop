@@ -1,0 +1,990 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <!-- SEO Meta Tags -->
+    <title>Capture Photos - Pixelloop</title>
+    <meta
+      name="description"
+      content="Take or upload photos for your polaroid creation. Use your camera or choose from your gallery."
+    />
+    <meta name="robots" content="noindex, follow" />
+
+    <!-- Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-R5GM0GFGRK"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-R5GM0GFGRK");
+    </script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ── Design Tokens ─────────────────────────────────── */
+      :root {
+        --bg: #f2ede6;
+        --surface: #ffffff;
+        --fg: #1a1714;
+        --muted: #8a857d;
+        --accent: #000000;
+        --accent-light: #f5ead8;
+        --border: rgba(26, 23, 20, 0.1);
+        --radius-card: 14px;
+        --radius-btn: 10px;
+        --shadow-card: 0 2px 16px rgba(0, 0, 0, 0.07);
+        --shadow-viewfinder: 0 12px 40px rgba(0, 0, 0, 0.15);
+        --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        font-size: 16px;
+        color: var(--fg);
+        background: #d1b49a; /* warna solid */
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23grain)' opacity='0.025'/%3E%3C/svg%3E");
+        min-height: 100dvh;
+        width: 100vw;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      /* ── Navbar ────────────────────────────────────────── */
+      .navbar {
+        width: 100%;
+        height: 54px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        position: relative;
+        z-index: 1000;
+        flex-shrink: 0;
+      }
+
+      .nav-back {
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--muted);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: var(--transition);
+      }
+
+      .nav-back:hover {
+        color: var(--fg);
+      }
+
+      .nav-logo {
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--fg);
+        text-decoration: none;
+        letter-spacing: -0.01em;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .nav-logo:hover {
+        color: var(--accent);
+        transition: var(--transition);
+      }
+
+      .nav-spacer {
+        width: 60px;
+      }
+
+      /* ── Page Content (centered column) ────────────────── */
+      .page-content {
+        width: 100%;
+        max-width: 560px;
+        padding: 24px 16px 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+
+      /* ── Viewfinder ─────────────────────────────────────── */
+      .viewfinder-frame {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 16px;
+        overflow: hidden;
+        background: #000;
+        border: 2px solid var(--border);
+        box-shadow: var(--shadow-viewfinder);
+        max-height: 58vh;
+      }
+
+      video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scaleX(-1);
+        filter: contrast(1.05);
+      }
+
+      /* Rule of thirds grid overlay */
+      .grid-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        background:
+          linear-gradient(
+            to right,
+            transparent 33%,
+            rgba(255, 255, 255, 0.15) 33%,
+            rgba(255, 255, 255, 0.15) 33.5%,
+            transparent 33.5%,
+            transparent 66%,
+            rgba(255, 255, 255, 0.15) 66%,
+            rgba(255, 255, 255, 0.15) 66.5%,
+            transparent 66.5%
+          ),
+          linear-gradient(
+            to bottom,
+            transparent 33%,
+            rgba(255, 255, 255, 0.15) 33%,
+            rgba(255, 255, 255, 0.15) 33.5%,
+            transparent 33.5%,
+            transparent 66%,
+            rgba(255, 255, 255, 0.15) 66%,
+            rgba(255, 255, 255, 0.15) 66.5%,
+            transparent 66.5%
+          );
+      }
+
+      /* Flash overlay */
+      .flash-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: white;
+        opacity: 0;
+        pointer-events: none;
+        z-index: 9999;
+      }
+
+      @keyframes flash-animation {
+        0% {
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+
+      .flash-overlay.active {
+        animation: flash-animation 0.28s ease-out forwards;
+      }
+
+      /* Countdown number */
+      .count-big {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: 7rem;
+        font-weight: 700;
+        color: #ffffff;
+        text-shadow: 0 2px 24px rgba(0, 0, 0, 0.5);
+        z-index: 50;
+        pointer-events: none;
+        display: none;
+      }
+
+      .count-big.visible {
+        display: block;
+      }
+
+      /* ── Film Slots Row (horizontal, centered) ─────────── */
+      .film-strip {
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-card);
+        box-shadow: var(--shadow-card);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 14px 16px;
+        gap: 10px;
+      }
+
+      .film-strip-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+      }
+
+      .sidebar-label {
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--muted);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .photo-counter {
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--muted);
+      }
+
+      .slots-container {
+        display: flex;
+        flex-direction: row;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+      }
+
+      .film-slot {
+        width: 72px;
+        height: 72px;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: "DM Sans", sans-serif;
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: var(--muted);
+        background: var(--bg);
+        transition: var(--transition);
+        position: relative;
+        cursor: pointer;
+        flex-shrink: 0;
+        overflow: hidden;
+      }
+
+      .film-slot:hover {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(200, 168, 75, 0.15);
+      }
+
+      .film-slot.active {
+        border-color: var(--accent);
+        border-width: 1.5px;
+        box-shadow: 0 0 0 3px rgba(200, 168, 75, 0.25);
+        animation: slotPulse 1.5s ease-in-out infinite;
+      }
+
+      @keyframes slotPulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 3px rgba(200, 168, 75, 0.25);
+        }
+        50% {
+          box-shadow: 0 0 0 5px rgba(200, 168, 75, 0.1);
+        }
+      }
+
+      .film-slot.filled {
+        border-color: var(--accent);
+        animation: none;
+      }
+
+      .film-slot.filled img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+
+      /* ── Control Bar ───────────────────────────────────── */
+      .control-bar {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        z-index: 20;
+        position: relative;
+      }
+
+      /* Upload / Flip util buttons */
+      .util-btn {
+        background: var(--surface);
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--fg);
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: var(--transition);
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+      }
+
+      .util-btn:hover {
+        border-color: var(--accent);
+        background: var(--accent-light);
+      }
+
+      .util-btn:active {
+        transform: scale(0.97);
+      }
+
+      /* Shutter button */
+      .shutter-btn-large {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: var(--surface);
+        border: 3px solid var(--fg);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+        flex-shrink: 0;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .shutter-inner {
+        width: 54px;
+        height: 54px;
+        background: #e05c5c;
+        border-radius: 50%;
+        transition: var(--transition);
+      }
+
+      .shutter-btn-large:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .shutter-btn-large:active {
+        transform: scale(0.96);
+      }
+
+      .shutter-btn-large:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .shutter-btn-large:disabled:hover {
+        transform: none;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Continue / Finish button */
+      #finishBtn {
+        display: none;
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--fg);
+        font-weight: 600;
+        padding: 10px 22px;
+      }
+
+      #finishBtn:hover {
+        background: #b8973e;
+        border-color: #b8973e;
+      }
+
+      /* Info bubble (upload hint) */
+      .info-bubble {
+        position: fixed;
+        top: 70px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--surface);
+        padding: 10px 16px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-card);
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.85rem;
+        color: var(--fg);
+        display: none;
+        width: 240px;
+        text-align: center;
+        z-index: 2000;
+        box-shadow: var(--shadow-card);
+      }
+
+      /* ── Footer ────────────────────────────────────────── */
+      footer {
+        flex-shrink: 0;
+        padding: 10px 20px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.78rem;
+        color: var(--muted);
+        text-align: center;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        width: 100%;
+        z-index: 20;
+        margin-top: auto;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 3px;
+      }
+
+      .footer-links a {
+        color: var(--muted);
+        text-decoration: none;
+        transition: var(--transition);
+      }
+
+      .footer-links a:hover {
+        color: var(--accent);
+      }
+
+      /* ── Responsive ────────────────────────────────────── */
+      @media (max-width: 480px) {
+        .viewfinder-frame {
+          max-height: 50vh;
+        }
+        .film-slot {
+          width: 60px;
+          height: 60px;
+        }
+        .shutter-btn-large {
+          width: 64px;
+          height: 64px;
+        }
+        .shutter-inner {
+          width: 46px;
+          height: 46px;
+        }
+        .control-bar {
+          gap: 12px;
+        }
+        footer {
+          display: none;
+        }
+      }
+
+      @media (max-height: 600px) and (orientation: landscape) {
+        .viewfinder-frame {
+          max-height: 75vh;
+          width: auto;
+          max-width: 50vw;
+        }
+        .page-content {
+          flex-direction: row;
+          flex-wrap: wrap;
+          align-items: flex-start;
+          max-width: 900px;
+        }
+        .viewfinder-frame {
+          flex: 1;
+        }
+        footer {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Flash Overlay -->
+    <div class="flash-overlay" id="flashEffect"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a href="index.html" class="nav-back">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+        Back
+      </a>
+      <a href="index.html" class="nav-logo">Pixelloop</a>
+      <div class="nav-spacer"></div>
+    </nav>
+
+    <!-- Upload hint bubble -->
+    <div id="uploadHint" class="info-bubble">
+      Tap a slot below to upload a photo directly.
+    </div>
+
+    <!-- Page Content (centered) -->
+    <div class="page-content">
+      <!-- Viewfinder -->
+      <div class="viewfinder-frame">
+        <video id="videoElement" autoplay playsinline muted></video>
+        <div class="grid-overlay"></div>
+        <div id="countdownDisplay" class="count-big"></div>
+      </div>
+
+      <!-- Film Slots (horizontal strip) -->
+      <div class="film-strip">
+        <div class="film-strip-header">
+          <span class="sidebar-label">Foto Kamu</span>
+          <span class="photo-counter"><span id="photoCounter">0/1</span></span>
+        </div>
+        <div id="thumbnailGrid" class="slots-container"></div>
+      </div>
+
+      <!-- Controls -->
+      <div class="control-bar">
+        <button class="util-btn" id="uploadBtn" title="Upload Photo">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          Unggah
+        </button>
+
+        <button
+          id="startCameraBtn"
+          class="shutter-btn-large"
+          title="Take Photo"
+        >
+          <div class="shutter-inner"></div>
+        </button>
+
+        <button class="util-btn" id="switchCameraBtn" title="Flip Camera">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M1 4v6h6M23 20v-6h-6" />
+            <path
+              d="M20.49 9A9 9 0 005.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 013.51 15"
+            />
+          </svg>
+          Balik
+        </button>
+
+        <button class="util-btn" id="finishBtn">
+          Lanjutkan
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="none"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-links">
+        <a href="blog.html">Blog</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </div>
+      <div>&copy; 2025 Pixelloop</div>
+    </footer>
+
+    <canvas id="canvas" style="display: none"></canvas>
+    <input type="file" id="fileInput" accept="image/*" style="display: none" />
+
+    <script>
+      // --- CONFIG ---
+      const state = {
+        layout: "single", // 'single', 'photostrip', 'grid'
+        totalShots: 1,
+        currentShotIndex: 0,
+        photos: [], // Array to store photos at specific indices
+        isCapturing: false,
+        uploadTargetIndex: null, // To track which slot is being uploaded to
+      };
+
+      // --- DOM ELEMENTS ---
+      const video = document.getElementById("videoElement");
+      const startBtn = document.getElementById("startCameraBtn");
+      const switchBtn = document.getElementById("switchCameraBtn");
+      const uploadBtn = document.getElementById("uploadBtn");
+      const finishBtn = document.getElementById("finishBtn");
+      const fileInput = document.getElementById("fileInput");
+      const thumbnailContainer = document.getElementById("thumbnailGrid");
+      const counterDisplay = document.getElementById("photoCounter");
+      const countdownDisplay = document.getElementById("countdownDisplay");
+      const flashEffect = document.getElementById("flashEffect");
+      const canvas = document.getElementById("canvas");
+      const uploadHint = document.getElementById("uploadHint");
+
+      // --- INIT ---
+      window.addEventListener("DOMContentLoaded", () => {
+        loadSettings();
+        renderSlots();
+        startCamera();
+
+        // Events
+        startBtn.addEventListener("click", startCaptureSequence);
+        switchBtn.addEventListener("click", switchCamera);
+
+        // Upload Button logic
+        uploadBtn.addEventListener("click", () => {
+          // Show hint
+          uploadHint.style.display = "block";
+
+          // Auto-trigger file picker for the first empty slot
+          const firstEmpty = state.photos.findIndex(
+            (p) => p === null || p === undefined,
+          );
+          if (firstEmpty !== -1) triggerUploadForSlot(firstEmpty);
+          else triggerUploadForSlot(0);
+
+          setTimeout(() => (uploadHint.style.display = "none"), 4000);
+        });
+
+        finishBtn.addEventListener("click", finalizeAndRedirect);
+        fileInput.addEventListener("change", handleFileUpload);
+      });
+
+      function loadSettings() {
+        const savedState = localStorage.getItem("polaroidState");
+        if (savedState) {
+          const parsed = JSON.parse(savedState);
+          state.layout = parsed.selectedLayout || "single";
+        }
+
+        // Define shots based on layout
+        if (state.layout === "single") state.totalShots = 1;
+        else if (state.layout === "photostrip") state.totalShots = 3;
+        else if (state.layout === "grid") state.totalShots = 4;
+
+        // Initialize photo array with empty slots
+        state.photos = new Array(state.totalShots).fill(null);
+        updateCounter();
+      }
+
+      function renderSlots() {
+        thumbnailContainer.innerHTML = "";
+        for (let i = 0; i < state.totalShots; i++) {
+          const slot = document.createElement("div");
+          slot.className = "film-slot";
+          slot.id = `slot-${i}`;
+          slot.title = "Click to upload a photo here";
+          if (i === 0) slot.classList.add("active");
+          slot.innerHTML = i + 1;
+
+          // Add Click Event for Individual Upload
+          slot.onclick = () => triggerUploadForSlot(i);
+
+          thumbnailContainer.appendChild(slot);
+        }
+      }
+
+      // --- UPLOAD LOGIC ---
+      function triggerUploadForSlot(index) {
+        if (state.isCapturing) return; // Don't allow during camera sequence
+        state.uploadTargetIndex = index;
+        fileInput.click();
+      }
+
+      function handleFileUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (evt) {
+          const img = new Image();
+          img.onload = () => {
+            const ctx = canvas.getContext("2d");
+
+            // Crop to Square to match Polaroid look
+            const size = Math.min(img.width, img.height);
+            const sx = (img.width - size) / 2;
+            const sy = (img.height - size) / 2;
+
+            canvas.width = size;
+            canvas.height = size;
+
+            // Draw cropped image
+            ctx.drawImage(img, sx, sy, size, size, 0, 0, size, size);
+
+            const data = canvas.toDataURL("image/jpeg");
+
+            // Save to specific slot index
+            state.photos[state.uploadTargetIndex] = data;
+
+            fillSlot(state.uploadTargetIndex, data);
+            checkCompletion();
+
+            // Reset file input
+            fileInput.value = "";
+          };
+          img.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // --- CAMERA LOGIC ---
+      let currentStream = null;
+      let facingMode = "user";
+
+      async function startCamera() {
+        if (currentStream) {
+          currentStream.getTracks().forEach((track) => track.stop());
+        }
+        try {
+          const constraints = {
+            video: {
+              facingMode: facingMode,
+              aspectRatio: 1,
+              width: { ideal: 1080 },
+            },
+            audio: false,
+          };
+          currentStream =
+            await navigator.mediaDevices.getUserMedia(constraints);
+          video.srcObject = currentStream;
+        } catch (err) {
+          console.error("Camera error:", err);
+          alert("Could not access camera. Please check permissions.");
+        }
+      }
+
+      function switchCamera() {
+        facingMode = facingMode === "user" ? "environment" : "user";
+        startCamera();
+      }
+
+      // --- CAPTURE SEQUENCE ---
+      async function startCaptureSequence() {
+        if (state.isCapturing) return;
+        state.isCapturing = true;
+        startBtn.disabled = true;
+        finishBtn.style.display = "none";
+
+        // Find first empty slot or start from 0 if all full
+        let startIdx = state.photos.findIndex((p) => p === null);
+        if (startIdx === -1) {
+          startIdx = 0;
+          // Clear UI if retaking all
+          state.photos.fill(null);
+          document.querySelectorAll(".film-slot").forEach((s) => {
+            s.classList.remove("filled");
+            s.innerHTML = s.id.split("-")[1] * 1 + 1; // reset number
+          });
+        }
+
+        // Loop through remaining shots
+        for (let i = startIdx; i < state.totalShots; i++) {
+          state.currentShotIndex = i;
+          highlightSlot(i);
+
+          await runCountdown(3);
+
+          triggerFlash();
+          const photoData = takeSnapshot();
+
+          state.photos[i] = photoData;
+          fillSlot(i, photoData);
+          updateCounter();
+
+          if (i < state.totalShots - 1) {
+            await wait(1500);
+          }
+        }
+
+        state.isCapturing = false;
+        startBtn.disabled = false;
+        checkCompletion();
+      }
+
+      function runCountdown(seconds) {
+        return new Promise((resolve) => {
+          let count = seconds;
+          countdownDisplay.innerText = count;
+          countdownDisplay.classList.add("visible");
+
+          const timer = setInterval(() => {
+            count--;
+            if (count > 0) {
+              countdownDisplay.innerText = count;
+            } else {
+              clearInterval(timer);
+              countdownDisplay.classList.remove("visible");
+              resolve();
+            }
+          }, 1000);
+        });
+      }
+
+      function triggerFlash() {
+        flashEffect.classList.add("active");
+        setTimeout(() => {
+          flashEffect.classList.remove("active");
+        }, 300);
+      }
+
+      function takeSnapshot() {
+        const ctx = canvas.getContext("2d");
+        // Use video width/height for best resolution
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        ctx.save();
+        // Mirror logic
+        if (facingMode === "user") {
+          ctx.scale(-1, 1);
+          ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+        } else {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        }
+        ctx.restore();
+
+        return canvas.toDataURL("image/jpeg", 0.9);
+      }
+
+      // --- UI UPDATES ---
+      function highlightSlot(index) {
+        document
+          .querySelectorAll(".film-slot")
+          .forEach((s) => s.classList.remove("active"));
+        const slot = document.getElementById(`slot-${index}`);
+        if (slot) {
+          slot.classList.add("active");
+          // Auto-scroll to active slot
+          slot.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+            inline: "center",
+          });
+        }
+      }
+
+      function fillSlot(index, dataUrl) {
+        const slot = document.getElementById(`slot-${index}`);
+        if (slot) {
+          slot.innerHTML = `<img src="${dataUrl}" alt="Shot ${index + 1}">`;
+          slot.classList.add("filled");
+        }
+      }
+
+      function updateCounter() {
+        const filledCount = state.photos.filter((p) => p !== null).length;
+        counterDisplay.innerText = `${filledCount}/${state.totalShots}`;
+      }
+
+      function checkCompletion() {
+        updateCounter();
+        const isFull = state.photos.every((p) => p !== null);
+        if (isFull) {
+          finishBtn.style.display = "flex";
+        } else {
+          finishBtn.style.display = "none";
+        }
+      }
+
+      function wait(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
+      // --- FINISH ---
+      function finalizeAndRedirect() {
+        const validPhotos = state.photos.filter((p) => p !== null);
+        if (validPhotos.length === 0)
+          return alert("Please take or upload at least one photo.");
+
+        const finalState = {
+          layout: state.layout,
+          images: validPhotos,
+          date: new Date().toISOString(),
+        };
+        localStorage.setItem("polaroidResult", JSON.stringify(finalState));
+        window.location.href = "download.html";
+      }
+    </script>
+  </body>
+</html>

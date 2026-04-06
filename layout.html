@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-R5GM0GFGRK"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-R5GM0GFGRK");
+    </script>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+
+    <!-- SEO Meta Tags -->
+    <title>Choose Your Layout - Pixelloop</title>
+    <meta
+      name="description"
+      content="Select your perfect photo layout: Classic Polaroid, Photostrip, or Grid. Create aesthetic photos with vintage filters and cute stickers."
+    />
+    <meta name="robots" content="noindex, follow" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ── Design Tokens ─────────────────────────────────── */
+      :root {
+        --bg: #a07742;
+        --surface: #ffffff;
+        --fg: #1a1714;
+        --muted: #8a857d;
+        --accent: #c8a84b;
+        --accent-light: #f5ead8;
+        --surface: #ffffff;
+        --fg: #2a1f12;
+        --accent: #e2b66b;
+        --accent-light: #f3e2c5;
+        --border: rgba(26, 23, 20, 0.1);
+        --radius-card: 16px;
+        --radius-btn: 10px;
+        --shadow-card: 0 4px 18px rgba(0, 0, 0, 0.08);
+        --shadow-hover: 0 12px 36px rgba(0, 0, 0, 0.13);
+        --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        font-size: 16px;
+        color: var(--fg);
+        background: #d1b49a; /* warna solid */
+        min-height: 100vh;
+        width: 100vw;
+        overflow-x: hidden;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ── Navbar ────────────────────────────────────────── */
+      .navbar {
+        width: 100%;
+        height: 54px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        position: relative;
+        z-index: 1000;
+        flex-shrink: 0;
+      }
+
+      .nav-back {
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--muted);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: var(--transition);
+      }
+
+      .nav-back:hover {
+        color: var(--fg);
+      }
+
+      .nav-logo {
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--fg);
+        text-decoration: none;
+        letter-spacing: -0.01em;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .nav-logo:hover {
+        color: var(--accent);
+        transition: var(--transition);
+      }
+
+      .nav-spacer {
+        width: 60px;
+      }
+
+      /* ── Main Content ──────────────────────────────────── */
+      main {
+        flex: 1 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 48px 20px 56px;
+        width: 100%;
+      }
+
+      .title-group {
+        text-align: center;
+        margin-bottom: 44px;
+      }
+
+      .page-title {
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: 2.8rem;
+        font-weight: 700;
+        font-style: italic;
+        color: var(--fg);
+        margin: 0 0 12px;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+      }
+
+      .page-subtitle {
+        font-family: "DM Sans", sans-serif;
+        font-size: 1rem;
+        font-weight: 400;
+        color: var(--muted);
+        margin: 0;
+        line-height: 1.5;
+      }
+
+      /* ── Layout Cards ──────────────────────────────────── */
+      .layout-cards {
+        display: flex;
+        gap: 24px;
+        justify-content: center;
+        align-items: stretch;
+        flex-wrap: wrap;
+        width: 100%;
+        max-width: 760px;
+      }
+
+      .film-card {
+        width: 200px;
+        height: 280px;
+        background: var(--surface);
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-card);
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        transition: var(--transition);
+        position: relative;
+        flex-shrink: 0;
+        box-shadow: var(--shadow-card);
+        overflow: hidden;
+        outline: none;
+      }
+
+      .film-card:hover {
+        transform: translateY(-6px);
+        border-color: var(--accent);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .film-card:active {
+        transform: scale(0.97);
+        box-shadow: var(--shadow-card);
+      }
+
+      .film-card:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-hover);
+      }
+
+      /* ── Card Preview (dark top area) ─────────────────── */
+      .card-preview {
+        flex: 1;
+        background: var(--fg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      /* Classic: one polaroid shape — wide white rect with thick bottom bar */
+      .preview-classic {
+        width: 70%;
+        aspect-ratio: 3 / 4;
+        background: var(--surface);
+        border-radius: 3px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
+        display: flex;
+        flex-direction: column;
+        padding: 6px 6px 20px;
+      }
+
+      .preview-classic .photo-area {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 2px;
+      }
+
+      /* Strip: three narrow white rectangles stacked */
+      .preview-strip {
+        width: 46%;
+        height: 90%;
+        background: var(--surface);
+        border-radius: 3px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 6px;
+      }
+
+      .preview-strip .strip-cell {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 2px;
+      }
+
+      /* Grid: 2x2 squares */
+      .preview-grid {
+        width: 78%;
+        aspect-ratio: 1 / 1;
+        background: var(--surface);
+        border-radius: 3px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 4px;
+        padding: 6px;
+      }
+
+      .preview-grid .grid-cell {
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 2px;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* ── Card Text Footer ──────────────────────────────── */
+      .card-info {
+        padding: 14px 16px 16px;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+      }
+
+      .card-title {
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--fg);
+        margin: 0 0 4px;
+        line-height: 1.2;
+      }
+
+      .card-desc {
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.85rem;
+        font-weight: 400;
+        color: var(--muted);
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      /* ── Footer ────────────────────────────────────────── */
+      footer {
+        flex-shrink: 0;
+        padding: 18px 20px;
+        padding-bottom: calc(18px + env(safe-area-inset-bottom));
+        text-align: center;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-bottom: 5px;
+      }
+
+      .footer-links a {
+        color: var(--muted);
+        text-decoration: none;
+        transition: var(--transition);
+      }
+
+      .footer-links a:hover {
+        color: var(--accent);
+      }
+
+      /* ── Mobile ────────────────────────────────────────── */
+      @media (max-width: 768px) {
+        main {
+          padding: 32px 16px 44px;
+        }
+
+        .page-title {
+          font-size: 2.2rem;
+        }
+
+        .title-group {
+          margin-bottom: 32px;
+        }
+
+        .layout-cards {
+          gap: 16px;
+          overflow-x: auto;
+          flex-wrap: nowrap;
+          justify-content: flex-start;
+          scroll-snap-type: x mandatory;
+          padding: 6px 16px 12px;
+          max-width: 100%;
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+
+        .layout-cards::-webkit-scrollbar {
+          display: none;
+        }
+
+        .film-card {
+          width: 160px;
+          height: 220px;
+          scroll-snap-align: center;
+          flex-shrink: 0;
+        }
+
+        .card-info {
+          padding: 12px 14px 14px;
+        }
+
+        .card-title {
+          font-size: 1.1rem;
+        }
+
+        .nav-logo {
+          font-size: 1.15rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a href="start.html" class="nav-back">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+        Back
+      </a>
+      <a href="start.html" class="nav-logo">Pixelloop</a>
+      <div class="nav-spacer"></div>
+    </nav>
+
+    <main>
+      <div class="title-group">
+        <h1 class="page-title">Pilih tata letak Anda</h1>
+        <p class="page-subtitle">Pilih format untuk Photobooth Anda</p>
+      </div>
+
+      <div class="layout-cards">
+        <!-- Classic Polaroid -->
+        <div
+          class="film-card"
+          role="button"
+          tabindex="0"
+          aria-label="Select Classic Polaroid layout: 1 large photo"
+          onclick="selectLayout('single')"
+          onkeydown="handleCardKey(event, 'single')"
+        >
+          <div class="card-preview">
+            <div class="preview-classic">
+              <div class="photo-area"></div>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="card-title">Klasik</div>
+            <div class="card-desc">satu foto besar berbingkai</div>
+          </div>
+        </div>
+
+        <!-- Photo Strip -->
+        <div
+          class="film-card"
+          role="button"
+          tabindex="0"
+          aria-label="Select Photo Strip layout: 3 photos vertical"
+          onclick="selectLayout('photostrip')"
+          onkeydown="handleCardKey(event, 'photostrip')"
+        >
+          <div class="card-preview">
+            <div class="preview-strip">
+              <div class="strip-cell"></div>
+              <div class="strip-cell"></div>
+              <div class="strip-cell"></div>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="card-title">Strip</div>
+            <div class="card-desc">3 foto dalam strip vertikal</div>
+          </div>
+        </div>
+
+        <!-- Photo Grid -->
+        <div
+          class="film-card"
+          role="button"
+          tabindex="0"
+          aria-label="Select Photo Grid layout: 4 photos in a 2x2 grid"
+          onclick="selectLayout('grid')"
+          onkeydown="handleCardKey(event, 'grid')"
+        >
+          <div class="card-preview">
+            <div class="preview-grid">
+              <div class="grid-cell"></div>
+              <div class="grid-cell"></div>
+              <div class="grid-cell"></div>
+              <div class="grid-cell"></div>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="card-title">Grid</div>
+            <div class="card-desc">4 foto dalam kolase 2x2</div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-links">
+        <a href="blog.html">Blog</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </div>
+      <div>&copy; 2025 Pixelloop</div>
+    </footer>
+
+    <script>
+      function handleCardKey(e, layout) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          selectLayout(layout);
+        }
+      }
+
+      function selectLayout(layoutType) {
+        // Save state
+        const state = {
+          selectedLayout: layoutType,
+          timestamp: new Date().toISOString(),
+        };
+
+        try {
+          localStorage.setItem("polaroidState", JSON.stringify(state));
+
+          // Add a tiny visual delay for the click effect before navigating
+          setTimeout(() => {
+            window.location.href = "capture.html";
+          }, 150);
+        } catch (e) {
+          alert("Storage disabled! Please enable cookies.");
+        }
+      }
+    </script>
+  </body>
+</html>
