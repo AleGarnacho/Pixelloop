@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Photobooth — Payment</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cabin:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Cabin", sans-serif;
+        background: #e6d3c2;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+      }
+      .payment-container {
+        background: #fff;
+        margin: 40px 0;
+        width: 380px;
+        padding: 24px;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        margin-bottom: 16px;
+        color: #333;
+      }
+
+      .summary {
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 12px;
+        margin-bottom: 16px;
+      }
+      .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 6px;
+      }
+      .summary-item strong {
+        color: #222;
+      }
+      .total {
+        font-weight: 700;
+        font-size: 1.1em;
+      }
+
+      .voucher {
+        margin-top: 20px;
+      }
+      .voucher input {
+        width: 50%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .voucher button {
+        padding: 8px 16px;
+        background: #333;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .voucher button:hover {
+        background: #222;
+      }
+
+      .payment-method {
+        margin-top: 30px;
+      }
+      .qris-logo {
+        display: block;
+        width: 120px;
+        margin: 12px 0;
+      }
+
+      .qris-info {
+        background: #f0f2f5;
+        border-radius: 8px;
+        padding: 12px;
+        font-size: 0.9em;
+        color: #333;
+        line-height: 1.5em;
+      }
+
+      .terms {
+        font-size: 0.8em;
+        margin-top: 20px;
+        color: #666;
+      }
+
+      .place-order {
+        width: 100%;
+        padding: 12px 0;
+        background: #111;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-weight: 700;
+        font-size: 1em;
+        margin-top: 18px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+      .place-order:hover {
+        background: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="payment-container">
+      <h2>Pesanan Anda</h2>
+
+      <div class="summary">
+        <div class="summary-item">
+          <span>Product</span>
+          <span><strong>Subtotal</strong></span>
+        </div>
+        <div class="summary-item">
+          <span>Photobooth Pass × 1</span>
+          <span>Rp25.000</span>
+        </div>
+        <div class="summary-item">
+          <span>Durasi</span>
+          <span>1 sesi</span>
+        </div>
+        <div class="summary-item">
+          <span>Subtotal</span>
+          <span>Rp25.000</span>
+        </div>
+        <div class="summary-item">
+          <span>Surcharge</span>
+          <span>Rp0</span>
+        </div>
+        <div class="summary-item total">
+          <span>Total</span>
+          <span>Rp25.000</span>
+        </div>
+      </div>
+
+      <div class="voucher">
+        <label for="voucher">Masukkan kode voucher dibawah</label><br />
+        <input type="text" id="voucher" placeholder="Kode" />
+        <button>Gunakan</button>
+      </div>
+
+      <div class="payment-method">
+        <h3>QRIS</h3>
+        <img src="qrislogo.png" alt="QRIS" class="qris-logo" />
+        <div class="qris-info">
+          Bayar dengan menggunakan dompet digital yang kompatibel dengan QRIS
+          atau aplikasi perbankan (GoPay, ShopeePay, OVO, DANA, LinkAja, dan
+          dompet digital lainnya).
+        </div>
+      </div>
+
+      <p class="terms">Saya menyetujui syarat dan ketentuan yang berlaku</p>
+
+      <button
+        class="place-order"
+        onclick="window.location.href='0003a_payment.html'"
+      >
+        Place order
+      </button>
+    </div>
+  </body>
+</html>

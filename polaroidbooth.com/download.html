@@ -1,0 +1,1883 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Studio — Pixelloop</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Google AdSense -->
+
+    <style>
+      /* ── VARIABLES ─────────────────────────────────── */
+      :root {
+        --bg: #f2ede6;
+        --surface: #ffffff;
+        --fg: #1a1714;
+        --muted: #8a857d;
+        --accent: #c8a84b;
+        --accent2: #e05c5c;
+        --border: rgba(26, 23, 20, 0.1);
+        --t: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family:
+          "DM Sans",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        min-height: 100dvh;
+        width: 100vw;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+      }
+
+      /* ── NAVBAR ─────────────────────────────────────── */
+      .navbar {
+        width: 100%;
+        height: 54px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        flex-shrink: 0;
+        z-index: 500;
+        box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+      }
+      .back-link {
+        font-size: 0.88rem;
+        font-weight: 500;
+        color: var(--muted);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: var(--t);
+        min-width: 64px;
+      }
+      .back-link:hover {
+        color: var(--fg);
+      }
+      .nav-logo {
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--fg);
+        text-decoration: none;
+        letter-spacing: -0.01em;
+      }
+      .nav-spacer {
+        min-width: 64px;
+      }
+
+      /* ── PAGE CONTENT ─────────────────────────────── */
+      .page-content {
+        width: 100%;
+        max-width: 680px;
+        padding: 24px 16px 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 28px;
+      }
+
+      /* ── PREVIEW AREA ─────────────────────────────── */
+      .preview-area {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        padding: 8px;
+      }
+      .scaler-container {
+        transform-origin: center center;
+        transition: transform 0.1s linear;
+        filter: drop-shadow(0 16px 48px rgba(0, 0, 0, 0.2));
+      }
+
+      /* ── POLAROID FRAME (all variants preserved) ──── */
+      .polaroid-frame {
+        background: white;
+        position: relative;
+        user-select: none;
+        touch-action: none;
+        transition: background 0.3s ease;
+        display: flex;
+        flex-direction: column;
+      }
+      .polaroid-frame.style-white {
+        background: #fff;
+      }
+      .polaroid-frame.style-black {
+        background: #1a1a1a;
+        color: white;
+      }
+      .polaroid-frame.style-cream {
+        background: #fdf5e6;
+      }
+      .polaroid-frame.style-pink {
+        background: #ffe4e1;
+      }
+      .polaroid-frame.style-mint {
+        background: #e0f2f1;
+      }
+      .polaroid-frame.style-slate {
+        background: #37474f;
+        color: white;
+      }
+      .polaroid-frame.style-lavender {
+        background: #e6e6fa;
+      }
+
+      /* No Frame */
+      .polaroid-frame.style-noframe {
+        background: transparent;
+      }
+      .polaroid-frame.style-noframe.single {
+        padding: 0;
+        height: 320px;
+      }
+      .polaroid-frame.style-noframe.grid {
+        padding: 0;
+        height: 340px;
+      }
+      .polaroid-frame.style-noframe.grid .photo-container {
+        gap: 4px;
+      }
+      .polaroid-frame.style-noframe.photostrip {
+        padding: 0;
+        height: 496px;
+      }
+      .polaroid-frame.style-noframe.photostrip .photo-container {
+        gap: 8px;
+      }
+
+      /* Dimensions */
+      .polaroid-frame.grid {
+        width: 340px;
+        height: 340px;
+        padding: 15px;
+      }
+      .polaroid-frame.single {
+        width: 320px;
+        height: 420px;
+        padding: 12px 12px 80px 12px;
+      }
+      .polaroid-frame.photostrip {
+        width: 160px;
+        height: 530px;
+        padding: 10px 10px 80px 10px;
+      }
+
+      .photo-container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+      }
+      .polaroid-frame.grid .photo-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 8px;
+      }
+      .polaroid-frame.single .photo-container {
+        display: flex;
+      }
+      .polaroid-frame.photostrip .photo-container {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .photo-slot {
+        background: #e8e4de;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+      }
+      .photo-img-div {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+
+      /* ── DRAGGABLE STICKERS ─────────────────────────── */
+      .draggable-item {
+        position: absolute;
+        cursor: grab;
+        z-index: 100;
+        filter: drop-shadow(1px 2px 3px rgba(0, 0, 0, 0.1));
+        touch-action: none;
+      }
+      .draggable-item:active {
+        cursor: grabbing;
+      }
+      .sticker-img {
+        width: 110px;
+        height: auto;
+        min-width: 30px;
+        object-fit: contain;
+        pointer-events: none;
+        display: block;
+      }
+      .custom-text {
+        font-family: "DM Sans", sans-serif;
+        font-size: 1.5rem;
+        color: #333;
+        white-space: nowrap;
+        line-height: 1;
+      }
+
+      .delete-btn {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background: var(--accent2);
+        color: white;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        text-align: center;
+        line-height: 19px;
+        font-size: 11px;
+        cursor: pointer;
+        display: none;
+        z-index: 101;
+        border: 2px solid white;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+      }
+      .draggable-item:hover .delete-btn {
+        display: block;
+      }
+      @media (hover: none) {
+        .draggable-item .delete-btn {
+          display: block;
+        }
+      }
+
+      /* Resize handle */
+      .resize-handle {
+        position: absolute;
+        bottom: -8px;
+        right: -8px;
+        width: 20px;
+        height: 20px;
+        background: white;
+        border: 2px solid var(--fg);
+        border-radius: 50%;
+        cursor: nwse-resize;
+        display: none;
+        z-index: 102;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+        touch-action: none;
+        font-size: 9px;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+      }
+      .resize-handle::after {
+        content: "⤡";
+        color: var(--fg);
+        font-size: 10px;
+      }
+      .draggable-item:hover .resize-handle {
+        display: flex;
+      }
+      @media (hover: none) {
+        .draggable-item .resize-handle {
+          display: flex;
+        }
+      }
+
+      /* ── CONTROLS PANEL (CENTERED) ──────────────────── */
+      .controls-panel {
+        width: 100%;
+        background: var(--surface);
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+        overflow: hidden;
+      }
+
+      /* ── TAB BAR ───────────────────────────────────── */
+      .tab-bar {
+        display: flex;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+      }
+      .tab-btn {
+        flex: 1;
+        padding: 14px 8px 10px;
+        background: transparent;
+        border: none;
+        font-family: "DM Sans", sans-serif;
+        color: var(--muted);
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        position: relative;
+        transition: var(--t);
+      }
+      .tab-icon {
+        font-size: 1.25rem;
+        line-height: 1;
+      }
+      .tab-label {
+        font-size: 0.68rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+      .tab-btn:hover {
+        color: var(--fg);
+      }
+      .tab-btn.active {
+        color: var(--fg);
+      }
+      .tab-btn.active::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 22%;
+        right: 22%;
+        height: 2.5px;
+        background: var(--accent);
+        border-radius: 2px 2px 0 0;
+      }
+
+      .tab-content {
+        display: none;
+        flex-direction: column;
+        overflow-x: hidden;
+      }
+      .tab-content.active {
+        display: flex;
+      }
+
+      /* ── SNAP TRAY ─────────────────────────────────── */
+      .snap-tray {
+        display: flex;
+        gap: 12px;
+        overflow-x: auto;
+        padding: 16px 14px 14px;
+        scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        align-items: flex-end;
+      }
+      .snap-tray::-webkit-scrollbar {
+        display: none;
+      }
+
+      .tray-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        flex-shrink: 0;
+        cursor: pointer;
+        scroll-snap-align: start;
+      }
+
+      .tray-circle {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 2.5px solid transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        transition:
+          transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+          border-color 0.18s ease,
+          box-shadow 0.18s ease;
+        background: rgba(26, 23, 20, 0.06);
+        position: relative;
+      }
+
+      .tray-item.active .tray-circle {
+        border-color: var(--fg);
+        box-shadow:
+          0 0 0 2.5px var(--accent),
+          0 6px 20px rgba(0, 0, 0, 0.18);
+        transform: scale(1.2) translateY(-6px);
+      }
+      .tray-item:hover .tray-circle {
+        transform: scale(1.08) translateY(-2px);
+        border-color: rgba(200, 168, 75, 0.5);
+      }
+      .tray-item.active:hover .tray-circle {
+        transform: scale(1.2) translateY(-6px);
+      }
+      .tray-item.adding .tray-circle {
+        transform: scale(1.35) translateY(-8px);
+        border-color: var(--accent);
+        box-shadow:
+          0 0 0 2.5px var(--fg),
+          0 8px 24px rgba(0, 0, 0, 0.22);
+      }
+
+      .tray-circle img {
+        width: 76%;
+        height: 76%;
+        object-fit: contain;
+        pointer-events: none;
+      }
+      .filter-circle {
+        font-size: 0.62rem;
+        font-weight: 700;
+        font-family: "DM Sans", sans-serif;
+        letter-spacing: 0.01em;
+        text-align: center;
+        padding: 3px;
+        line-height: 1.1;
+      }
+
+      .tray-label {
+        font-size: 0.67rem;
+        font-family: "DM Sans", sans-serif;
+        font-weight: 500;
+        color: var(--muted);
+        white-space: nowrap;
+        max-width: 64px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: center;
+        transition: color 0.15s;
+      }
+      .tray-item.active .tray-label {
+        color: var(--fg);
+        font-weight: 600;
+      }
+
+      .tray-locked {
+        opacity: 0.38;
+        pointer-events: none;
+      }
+      .tray-soon {
+        position: absolute;
+        bottom: 3px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.5rem;
+        font-weight: 700;
+        background: rgba(0, 0, 0, 0.65);
+        color: white;
+        padding: 1px 5px;
+        border-radius: 10px;
+        font-family: "DM Sans", sans-serif;
+        white-space: nowrap;
+      }
+
+      /* ── CATEGORY PILLS ─────────────────────────────── */
+      .cat-pills {
+        display: flex;
+        gap: 6px;
+        padding: 12px 14px 4px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        flex-shrink: 0;
+      }
+      .cat-pills::-webkit-scrollbar {
+        display: none;
+      }
+      .cat-pill {
+        background: transparent;
+        border: 1.5px solid var(--border);
+        padding: 4px 13px;
+        border-radius: 20px;
+        font-size: 0.77rem;
+        font-weight: 500;
+        cursor: pointer;
+        white-space: nowrap;
+        flex-shrink: 0;
+        font-family: "DM Sans", sans-serif;
+        color: var(--muted);
+        transition: var(--t);
+      }
+      .cat-pill:hover {
+        border-color: var(--accent);
+        color: var(--fg);
+      }
+      .cat-pill.active {
+        background: var(--fg);
+        border-color: var(--fg);
+        color: #fff;
+      }
+
+      /* ── FRAME SWATCHES ─────────────────────────────── */
+      .frame-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        padding: 14px;
+      }
+      .frame-swatch {
+        border-radius: 10px;
+        border: 2px solid var(--border);
+        aspect-ratio: 3/2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.78rem;
+        font-weight: 600;
+        font-family: "DM Sans", sans-serif;
+        cursor: pointer;
+        transition: var(--t);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        user-select: none;
+      }
+      .frame-swatch:hover {
+        transform: scale(1.03);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+      }
+      .frame-swatch.selected {
+        border-color: var(--fg);
+        border-width: 2.5px;
+        box-shadow:
+          0 0 0 3px var(--accent),
+          0 4px 14px rgba(0, 0, 0, 0.1);
+        transform: scale(1.02);
+      }
+
+      /* ── ACTION BUTTONS ─────────────────────────────── */
+      .actions-footer {
+        width: 100%;
+        display: flex;
+        gap: 12px;
+      }
+      .btn-action {
+        flex: 1;
+        padding: 15px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 1rem;
+        font-weight: 600;
+        background: var(--fg);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: var(--t);
+        letter-spacing: 0.01em;
+        box-shadow: 0 2px 12px rgba(26, 23, 20, 0.18);
+      }
+      .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(26, 23, 20, 0.22);
+      }
+      .btn-action:active {
+        transform: translateY(0);
+        box-shadow: none;
+      }
+      .btn-share {
+        background: var(--accent);
+        color: var(--fg);
+      }
+      .btn-share:hover {
+        box-shadow: 0 5px 16px rgba(200, 168, 75, 0.45);
+      }
+
+      /* ── PRINT ANIMATION ────────────────────────────── */
+      #printAnimationOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(26, 23, 20, 0.9);
+        z-index: 9999;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        pointer-events: none;
+        backdrop-filter: blur(4px);
+      }
+      #printAnimationOverlay.active {
+        display: flex;
+        pointer-events: auto;
+      }
+      .machine-body {
+        width: 280px;
+        height: 64px;
+        background: #2c2c2e;
+        border-radius: 12px;
+        border: 2px solid #3a3a3c;
+        position: relative;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .machine-slot {
+        width: 240px;
+        height: 9px;
+        background: #000;
+        border-radius: 6px;
+      }
+      .print-wrapper {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 280px;
+        height: 600px;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .animating-photo {
+        width: 180px;
+        position: absolute;
+        top: -400px;
+        left: 50%;
+        transform: translateX(-50%);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+        border-radius: 2px;
+      }
+      #printAnimationOverlay.printing .animating-photo {
+        top: 150px;
+      }
+      .print-label {
+        color: rgba(255, 255, 255, 0.85);
+        position: absolute;
+        bottom: 80px;
+        font-family: "Playfair Display", serif;
+        font-size: 1.35rem;
+        font-weight: 700;
+        text-align: center;
+        width: 100%;
+        letter-spacing: 0.06em;
+        font-style: italic;
+      }
+
+      /* ── ANIMATIONS ─────────────────────────────────── */
+      @keyframes trayPop {
+        0% {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .snap-tray {
+        animation: trayPop 0.3s ease both;
+      }
+
+      /* ── RESPONSIVE ─────────────────────────────────── */
+      @media (max-width: 480px) {
+        .tray-circle {
+          width: 54px;
+          height: 54px;
+        }
+        .snap-tray {
+          gap: 8px;
+          padding: 12px 10px 10px;
+        }
+        .cat-pill {
+          font-size: 0.72rem;
+          padding: 3px 10px;
+        }
+        .frame-grid {
+          grid-template-columns: repeat(3, 1fr);
+          gap: 6px;
+          padding: 10px;
+        }
+        .frame-swatch {
+          font-size: 0.68rem;
+        }
+        .actions-footer {
+          gap: 10px;
+        }
+        .btn-action {
+          font-size: 0.92rem;
+          padding: 13px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Print Animation -->
+    <div id="printAnimationOverlay">
+      <div class="print-wrapper">
+        <div
+          style="
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+          "
+        >
+          <div class="machine-body">
+            <div class="machine-slot"></div>
+            <div
+              style="
+                width: 7px;
+                height: 7px;
+                background: #30d158;
+                border-radius: 50%;
+                position: absolute;
+                right: 14px;
+                top: 14px;
+                box-shadow: 0 0 8px #30d158;
+              "
+            ></div>
+          </div>
+        </div>
+        <img id="animPhoto" class="animating-photo" src="" alt="Printing..." />
+      </div>
+      <p class="print-label">Developing…</p>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a href="start.html" class="back-link">&#8592; Back</a>
+      <a href="start.html" class="nav-logo">Pixelloop</a>
+      <div class="nav-spacer"></div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="page-content">
+      <!-- Preview -->
+      <div class="preview-area" id="previewArea">
+        <div id="scaler" class="scaler-container">
+          <div id="polaroid" class="polaroid-frame style-white">
+            <div class="photo-container" id="photoContainer"></div>
+            <div
+              id="overlayLayer"
+              style="
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+              "
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls Panel (centered) -->
+      <div class="controls-panel">
+        <!-- Tab bar -->
+        <div class="tab-bar">
+          <button class="tab-btn active" onclick="switchTab('stickers', this)">
+            <span class="tab-icon">✦</span>
+            <span class="tab-label">Stickers</span>
+          </button>
+          <button class="tab-btn" onclick="switchTab('filters', this)">
+            <span class="tab-icon">◈</span>
+            <span class="tab-label">Filters</span>
+          </button>
+          <button class="tab-btn" onclick="switchTab('frames', this)">
+            <span class="tab-icon">▭</span>
+            <span class="tab-label">Bingkai</span>
+          </button>
+        </div>
+
+        <!-- Stickers -->
+        <div id="tab-stickers" class="tab-content active">
+          <div class="cat-pills" id="stickerCats">
+            <button
+              class="cat-pill active"
+              onclick="filterStickers('all', this)"
+            >
+              All ✨
+            </button>
+            <button class="cat-pill" onclick="filterStickers('cute', this)">
+              Cute 💕
+            </button>
+            <button class="cat-pill" onclick="filterStickers('fun', this)">
+              Fun 🎉
+            </button>
+            <button class="cat-pill" onclick="filterStickers('decor', this)">
+              Decor 🌸
+            </button>
+          </div>
+          <div class="snap-tray" id="stickerMenu"></div>
+        </div>
+
+        <!-- Filters -->
+        <div id="tab-filters" class="tab-content">
+          <div class="snap-tray" id="filterTray"></div>
+        </div>
+
+        <!-- Frames -->
+        <div id="tab-frames" class="tab-content">
+          <div class="frame-grid" id="framesGrid">
+            <div
+              class="frame-swatch"
+              onclick="applyFrame('style-noframe', this)"
+              style="
+                background: linear-gradient(135deg, #f0ede8, #d8d4ce);
+                color: #555;
+              "
+            >
+              No Frame
+            </div>
+            <div
+              class="frame-swatch selected"
+              onclick="applyFrame('style-white', this)"
+              style="background: #fff; color: #333"
+            >
+              Classic White
+            </div>
+            <div
+              class="frame-swatch"
+              onclick="applyFrame('style-black', this)"
+              style="background: #1a1a1a; color: #fff"
+            >
+              Dark Mode
+            </div>
+            <div
+              class="frame-swatch"
+              onclick="applyFrame('style-cream', this)"
+              style="background: #fdf5e6; color: #6b5033"
+            >
+              Vintage Cream
+            </div>
+            <div
+              class="frame-swatch"
+              onclick="applyFrame('style-pink', this)"
+              style="background: #ffe4e1; color: #8b3a3a"
+            >
+              Soft Pink
+            </div>
+            <div
+              class="frame-swatch"
+              onclick="applyFrame('style-mint', this)"
+              style="background: #e0f2f1; color: #1a5f58"
+            >
+              Fresh Mint
+            </div>
+            <div
+              class="frame-swatch"
+              onclick="applyFrame('style-slate', this)"
+              style="background: #37474f; color: #fff"
+            >
+              Dark Slate
+            </div>
+            <div
+              class="frame-swatch"
+              onclick="applyFrame('style-lavender', this)"
+              style="background: #e6e6fa; color: #4a4a7a"
+            >
+              Lavender
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="actions-footer">
+        <button class="btn-action" onclick="downloadImage()">
+          &#8659; Unduh
+        </button>
+        <button class="btn-action btn-share" onclick="shareImage()">
+          &#8599; Bagikan
+        </button>
+      </div>
+    </div>
+
+    <script>
+      async function toBase64(url) {
+        const res = await fetch(url);
+        const blob = await res.blob();
+
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(blob);
+        });
+      }
+      /* ════════════════════════════════════════════
+       STICKERS DATABASE  (sticker_1 … sticker_46)
+       ════════════════════════════════════════════ */
+      const stickersDB = [
+        { name: "s1", src: "assets/sticker_1.png", size: 110, category: "fun" },
+        { name: "s2", src: "assets/sticker_2.png", size: 110, category: "fun" },
+        { name: "s3", src: "assets/sticker_3.png", size: 110, category: "fun" },
+        { name: "s4", src: "assets/sticker_4.png", size: 110, category: "fun" },
+        { name: "s5", src: "assets/sticker_5.png", size: 110, category: "fun" },
+        { name: "s6", src: "assets/sticker_6.png", size: 110, category: "fun" },
+        { name: "s7", src: "assets/sticker_7.png", size: 110, category: "fun" },
+        { name: "s8", src: "assets/sticker_8.png", size: 110, category: "fun" },
+        { name: "s9", src: "assets/sticker_9.png", size: 110, category: "fun" },
+        {
+          name: "s10",
+          src: "assets/sticker_10.png",
+          size: 110,
+          category: "fun",
+        },
+        {
+          name: "s11",
+          src: "assets/sticker_11.png",
+          size: 110,
+          category: "fun",
+        },
+        {
+          name: "s12",
+          src: "assets/sticker_12.png",
+          size: 110,
+          category: "fun",
+        },
+        {
+          name: "s13",
+          src: "assets/sticker_13.png",
+          size: 110,
+          category: "fun",
+        },
+        {
+          name: "s14",
+          src: "assets/sticker_14.png",
+          size: 110,
+          category: "fun",
+        },
+        {
+          name: "s15",
+          src: "assets/sticker_15.png",
+          size: 110,
+          category: "fun",
+        },
+        {
+          name: "s16",
+          src: "assets/sticker_16.png",
+          size: 110,
+          category: "fun",
+        },
+        {
+          name: "s17",
+          src: "assets/sticker_17.png",
+          size: 110,
+          category: "fun",
+        },
+        {
+          name: "s18",
+          src: "assets/sticker_18.png",
+          size: 110,
+          category: "fun",
+        },
+        {
+          name: "s19",
+          src: "assets/sticker_19.png",
+          size: 110,
+          category: "fun",
+        },
+        {
+          name: "s20",
+          src: "assets/sticker_20.png",
+          size: 110,
+          category: "fun",
+        },
+        {
+          name: "s21",
+          src: "assets/sticker_21.png",
+          size: 110,
+          category: "fun",
+        },
+        {
+          name: "s22",
+          src: "assets/sticker_22.png",
+          size: 110,
+          category: "fun",
+        },
+        {
+          name: "s23",
+          src: "assets/sticker_23.png",
+          size: 110,
+          category: "fun",
+        },
+        {
+          name: "s24",
+          src: "assets/sticker_24.png",
+          size: 110,
+          category: "fun",
+        },
+        {
+          name: "s25",
+          src: "assets/sticker_25.png",
+          size: 110,
+          category: "fun",
+        },
+        {
+          name: "s26",
+          src: "assets/sticker_26.png",
+          size: 110,
+          category: "fun",
+        },
+        {
+          name: "s27",
+          src: "assets/sticker_27.png",
+          size: 110,
+          category: "fun",
+        },
+        {
+          name: "s28",
+          src: "assets/sticker_28.png",
+          size: 110,
+          category: "decor",
+        },
+        {
+          name: "s29",
+          src: "assets/sticker_29.png",
+          size: 110,
+          category: "decor",
+        },
+        {
+          name: "s30",
+          src: "assets/sticker_30.png",
+          size: 110,
+          category: "decor",
+        },
+        {
+          name: "s31",
+          src: "assets/sticker_31.png",
+          size: 110,
+          category: "decor",
+        },
+        {
+          name: "s32",
+          src: "assets/sticker_32.png",
+          size: 110,
+          category: "decor",
+        },
+        {
+          name: "s33",
+          src: "assets/sticker_33.png",
+          size: 110,
+          category: "decor",
+        },
+        {
+          name: "s34",
+          src: "assets/sticker_34.png",
+          size: 110,
+          category: "cute",
+        },
+        {
+          name: "s35",
+          src: "assets/sticker_35.png",
+          size: 110,
+          category: "cute",
+        },
+        {
+          name: "s36",
+          src: "assets/sticker_36.png",
+          size: 110,
+          category: "cute",
+        },
+        {
+          name: "s37",
+          src: "assets/sticker_37.png",
+          size: 110,
+          category: "cute",
+        },
+        {
+          name: "s38",
+          src: "assets/sticker_38.png",
+          size: 110,
+          category: "cute",
+        },
+        {
+          name: "s39",
+          src: "assets/sticker_39.png",
+          size: 110,
+          category: "cute",
+        },
+        {
+          name: "s40",
+          src: "assets/sticker_40.png",
+          size: 110,
+          category: "cute",
+        },
+        {
+          name: "s41",
+          src: "assets/sticker_41.png",
+          size: 110,
+          category: "cute",
+        },
+        {
+          name: "s42",
+          src: "assets/sticker_42.png",
+          size: 110,
+          category: "cute",
+        },
+        {
+          name: "s43",
+          src: "assets/sticker_43.png",
+          size: 110,
+          category: "cute",
+        },
+        {
+          name: "s44",
+          src: "assets/sticker_44.png",
+          size: 110,
+          category: "cute",
+        },
+        {
+          name: "s45",
+          src: "assets/sticker_45.png",
+          size: 110,
+          category: "cute",
+        },
+        {
+          name: "s46",
+          src: "assets/sticker_46.png",
+          size: 110,
+          category: "cute",
+        },
+      ];
+
+      /* ════════════════════════════════════════════
+       FILTERS DATA
+       ════════════════════════════════════════════ */
+      const filtersDB = [
+        {
+          name: "None",
+          value: "none",
+          bg: "linear-gradient(135deg,#f5f5f5,#ddd)",
+          color: "#555",
+        },
+        {
+          name: "B&W",
+          value: "grayscale(100%)",
+          bg: "linear-gradient(135deg,#fff,#1a1a1a)",
+          color: "#fff",
+        },
+        {
+          name: "Sepia",
+          value: "sepia(100%)",
+          bg: "linear-gradient(135deg,#fff5e0,#c8a86a)",
+          color: "#4a3000",
+        },
+        {
+          name: "Pop",
+          value: "saturate(1.8)",
+          bg: "linear-gradient(135deg,#ffe0e0,#ff5e62)",
+          color: "#fff",
+        },
+        {
+          name: "Muted",
+          value: "saturate(0.5)",
+          bg: "linear-gradient(135deg,#f0f0f0,#bdc3c7)",
+          color: "#444",
+        },
+        {
+          name: "Bright",
+          value: "brightness(1.2)",
+          bg: "linear-gradient(135deg,#fff,#e8f4fd)",
+          color: "#4a6a7c",
+        },
+        {
+          name: "Dim",
+          value: "brightness(0.8)",
+          bg: "linear-gradient(135deg,#555,#111)",
+          color: "#fff",
+        },
+        {
+          name: "Cherry",
+          value: "brightness(1.1) saturate(1.2) sepia(0.3) hue-rotate(320deg)",
+          bg: "linear-gradient(135deg,#ffc3d9,#ff8fa3)",
+          color: "#fff",
+        },
+        {
+          name: "Glacier",
+          value: "brightness(1.1) saturate(0.8) sepia(0.3) hue-rotate(170deg)",
+          bg: "linear-gradient(135deg,#d4fcff,#7ec8e3)",
+          color: "#1a4a5a",
+        },
+        {
+          name: "Noir",
+          value: "grayscale(1) brightness(1.2) contrast(0.8)",
+          bg: "linear-gradient(135deg,#ddd,#888)",
+          color: "#222",
+        },
+        {
+          name: "Fuji",
+          value:
+            "contrast(1.1) brightness(1.1) sepia(0.3) hue-rotate(50deg) saturate(1.1)",
+          bg: "linear-gradient(135deg,#e8f5e9,#81c784)",
+          color: "#1a3a1a",
+        },
+        {
+          name: "Crimson",
+          value: "saturate(1.6) contrast(1.1) sepia(0.2) hue-rotate(-10deg)",
+          bg: "linear-gradient(135deg,#ff8a80,#c62828)",
+          color: "#fff",
+        },
+        {
+          name: "90s",
+          value:
+            "contrast(0.8) brightness(1.2) saturate(0.8) sepia(0.2) hue-rotate(330deg)",
+          bg: "linear-gradient(135deg,#e0c3fc,#9c4fd4)",
+          color: "#fff",
+        },
+        {
+          name: "Clean",
+          value: "brightness(1.2) contrast(1.05) saturate(0.9)",
+          bg: "linear-gradient(135deg,#e6e9f0,#c8cfe0)",
+          color: "#333",
+        },
+        {
+          name: "Glowy",
+          value:
+            "brightness(1.1) contrast(0.95) saturate(1.4) sepia(0.3) hue-rotate(-10deg)",
+          bg: "linear-gradient(135deg,#ffd194,#ff9a44)",
+          color: "#4a2000",
+        },
+        {
+          name: "Ruppert",
+          value:
+            "contrast(1.3) brightness(0.9) saturate(1.5) sepia(0.5) hue-rotate(-20deg)",
+          bg: "linear-gradient(135deg,#f6d365,#c0603a)",
+          color: "#fff",
+        },
+        {
+          name: "Flash",
+          value:
+            "contrast(1.5) brightness(1.2) saturate(1.2) sepia(0.1) hue-rotate(190deg)",
+          bg: "linear-gradient(135deg,#434343,#000)",
+          color: "#fff",
+        },
+        {
+          name: "MacBook",
+          value:
+            "contrast(1.08) brightness(1.03) saturate(0.92) hue-rotate(5deg)",
+          bg: "linear-gradient(135deg,#d0e8f8,#a8cce8)",
+          color: "#1a3a5c",
+        },
+        {
+          name: "iPhone",
+          value: "contrast(1.05) brightness(1.08) saturate(1.18)",
+          bg: "linear-gradient(135deg,#fff9f0,#ffc93c)",
+          color: "#4a3000",
+        },
+        {
+          name: "Minimal",
+          value: "brightness(1.15) contrast(0.9) saturate(0.7) sepia(0.1)",
+          bg: "linear-gradient(135deg,#f8f9fa,#dee2e6)",
+          color: "#444",
+        },
+      ];
+
+      /* ════════════════════════════════════════════
+       APP STATE
+       ════════════════════════════════════════════ */
+      let appState = {
+        layout: "grid",
+        photos: [],
+        currentFont: "DM Sans",
+        currentColor: "#1a1714",
+        currentFilter: "none",
+        currentFrameColor: "#ffffff",
+        noFrame: false,
+      };
+
+      const polaroidEl = document.getElementById("polaroid");
+      const photoContainer = document.getElementById("photoContainer");
+      const overlayLayer = document.getElementById("overlayLayer");
+
+      /* ════════════════════════════════════════════
+       INIT
+       ════════════════════════════════════════════ */
+      document.addEventListener("DOMContentLoaded", async () => {
+        await loadData(); // 🔥 penting
+        renderLayout();
+        renderStickerTray();
+        renderFilterTray();
+        autoResize();
+      });
+
+      function autoResize() {
+        const wrapper = document.getElementById("previewArea");
+        const element = document.getElementById("scaler");
+        const frame = document.getElementById("polaroid");
+        const padding = 20;
+        if (!wrapper || !element || !frame) return;
+        // Use the preview area's width (centered column, max 680px)
+        const aw = wrapper.clientWidth - padding * 2;
+        const ah = window.innerHeight * 0.55; // max 55vh for preview
+        const cw = frame.offsetWidth;
+        const ch = frame.offsetHeight;
+        const s = Math.min(aw / cw, ah / ch, 1.0);
+        element.style.transform = `scale(${s})`;
+        // Also set the wrapper height so it doesn't collapse
+        wrapper.style.height = ch * s + padding * 2 + "px";
+      }
+
+      async function loadData() {
+        const stored = localStorage.getItem("polaroidResult");
+        if (!stored) return;
+
+        const data = JSON.parse(stored);
+
+        appState.layout = data.layout || "grid";
+
+        let images = [];
+
+        if (data.images) {
+          images = data.images;
+        } else if (data.capturedPhoto) {
+          images = [data.capturedPhoto];
+        }
+
+        // 🔥 FIX: ubah semua ke base64
+        const converted = await Promise.all(
+          images.map(async (img) => {
+            if (img.startsWith("data:image")) return img; // sudah aman
+            try {
+              return await toBase64(img);
+            } catch {
+              return img;
+            }
+          }),
+        );
+
+        appState.photos = converted;
+      }
+
+      function renderLayout() {
+        polaroidEl.className = `polaroid-frame style-white ${appState.layout}`;
+        photoContainer.innerHTML = "";
+        let slots = 1;
+        if (appState.layout === "grid") slots = 4;
+        if (appState.layout === "photostrip") slots = 3;
+
+        for (let i = 0; i < slots; i++) {
+          const slot = document.createElement("div");
+          slot.className = "photo-slot";
+          if (appState.photos[i]) {
+            const d = document.createElement("div");
+            d.className = "photo-img-div";
+            d.style.backgroundImage = `url(${appState.photos[i]})`;
+            d.style.filter = appState.currentFilter;
+            slot.appendChild(d);
+          } else {
+            slot.style.background = "#e8e4de";
+            slot.innerHTML =
+              '<span style="color:#c0bbb3;font-size:2rem;display:flex;justify-content:center;align-items:center;height:100%;">+</span>';
+          }
+          photoContainer.appendChild(slot);
+        }
+        setTimeout(autoResize, 50);
+      }
+
+      /* ════════════════════════════════════════════
+       STICKER TRAY (Snapchat-style)
+       ════════════════════════════════════════════ */
+      let currentStickerCategory = "all";
+
+      window.filterStickers = function (cat, btn) {
+        currentStickerCategory = cat;
+        document
+          .querySelectorAll(".cat-pill")
+          .forEach((c) => c.classList.remove("active"));
+        if (btn) btn.classList.add("active");
+        renderStickerTray();
+      };
+
+      function renderStickerTray() {
+        const tray = document.getElementById("stickerMenu");
+        tray.innerHTML = "";
+        const list =
+          currentStickerCategory === "all"
+            ? stickersDB
+            : stickersDB.filter((s) => s.category === currentStickerCategory);
+
+        list.forEach((s) => {
+          const item = document.createElement("div");
+          item.className = "tray-item" + (s.locked ? " tray-locked" : "");
+          item.innerHTML = `
+                <div class="tray-circle">
+                    <img src="${s.src}" alt="" loading="lazy">
+                    ${s.locked ? '<span class="tray-soon">Soon</span>' : ""}
+                </div>
+            `;
+          if (!s.locked) {
+            item.onclick = () => {
+              item.classList.add("adding");
+              setTimeout(() => item.classList.remove("adding"), 420);
+              window.addItem("sticker", s.src, 35, 40, s.size);
+            };
+          }
+          tray.appendChild(item);
+        });
+      }
+
+      /* ════════════════════════════════════════════
+       FILTER TRAY (Snapchat-style)
+       ════════════════════════════════════════════ */
+      function renderFilterTray() {
+        const tray = document.getElementById("filterTray");
+        tray.innerHTML = "";
+        filtersDB.forEach((f) => {
+          const item = document.createElement("div");
+          item.className = "tray-item" + (f.value === "none" ? " active" : "");
+          item.innerHTML = `
+                <div class="tray-circle filter-circle" style="background:${f.bg};color:${f.color};">${f.name}</div>
+                <span class="tray-label">${f.name}</span>
+            `;
+          item.onclick = () => {
+            document
+              .querySelectorAll("#filterTray .tray-item")
+              .forEach((el) => el.classList.remove("active"));
+            item.classList.add("active");
+            appState.currentFilter = f.value;
+            document
+              .querySelectorAll(".photo-img-div")
+              .forEach((d) => (d.style.filter = f.value));
+          };
+          tray.appendChild(item);
+        });
+      }
+
+      /* ════════════════════════════════════════════
+       TAB SWITCHING
+       ════════════════════════════════════════════ */
+      window.switchTab = function (tab, btn) {
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document
+          .querySelectorAll(".tab-content")
+          .forEach((c) => c.classList.remove("active"));
+        if (btn) btn.classList.add("active");
+        const content = document.getElementById(`tab-${tab}`);
+        if (content) content.classList.add("active");
+      };
+
+      /* ════════════════════════════════════════════
+       FRAME APPLICATION
+       ════════════════════════════════════════════ */
+      window.applyFrame = function (cls, btn) {
+        polaroidEl.classList.remove(
+          "style-white",
+          "style-black",
+          "style-cream",
+          "style-pink",
+          "style-mint",
+          "style-slate",
+          "style-lavender",
+          "style-noframe",
+        );
+        polaroidEl.classList.add(cls);
+        document
+          .querySelectorAll(".frame-swatch")
+          .forEach((c) => c.classList.remove("selected"));
+        if (btn) btn.classList.add("selected");
+        appState.noFrame = cls === "style-noframe";
+        const colorMap = {
+          "style-black": "#1a1a1a",
+          "style-cream": "#fdf5e6",
+          "style-pink": "#ffe4e1",
+          "style-mint": "#e0f2f1",
+          "style-slate": "#37474f",
+          "style-lavender": "#e6e6fa",
+        };
+        appState.currentFrameColor = colorMap[cls] || "#ffffff";
+        setTimeout(autoResize, 30);
+      };
+
+      window.applyFilter = function (filter, btn) {
+        appState.currentFilter = filter;
+        document
+          .querySelectorAll(".photo-img-div")
+          .forEach((d) => (d.style.filter = filter));
+      };
+
+      window.changeFont = (f) => {
+        appState.currentFont = f;
+      };
+      window.changeColor = (c) => {
+        appState.currentColor = c;
+      };
+
+      /* ════════════════════════════════════════════
+       DRAG LOGIC (percentage-based)
+       ════════════════════════════════════════════ */
+      window.getScaleFactor = function () {
+        const scaler = document.getElementById("scaler");
+        if (!scaler) return 1;
+        const m = new DOMMatrix(window.getComputedStyle(scaler).transform);
+        return m.a || 1;
+      };
+
+      window.makeDraggable = function (el) {
+        let p1 = 0,
+          p2 = 0,
+          p3 = 0,
+          p4 = 0;
+        el.onmousedown = el.ontouchstart = start;
+
+        function start(e) {
+          if (e.target.classList.contains("delete-btn")) return;
+          if (e.type === "touchstart") e.preventDefault();
+          const ev = e.type.includes("touch") ? e.touches[0] : e;
+          p3 = ev.clientX;
+          p4 = ev.clientY;
+          document.onmouseup = document.ontouchend = stop;
+          document.onmousemove = document.ontouchmove = drag;
+        }
+        function drag(e) {
+          if (e.type === "touchmove") e.preventDefault();
+          const ev = e.type.includes("touch") ? e.touches[0] : e;
+          p1 = p3 - ev.clientX;
+          p2 = p4 - ev.clientY;
+          p3 = ev.clientX;
+          p4 = ev.clientY;
+          const sc = window.getScaleFactor();
+          el.style.top = el.offsetTop - p2 / sc + "px";
+          el.style.left = el.offsetLeft - p1 / sc + "px";
+        }
+        function stop() {
+          document.onmouseup = document.ontouchend = null;
+          document.onmousemove = document.ontouchmove = null;
+          const par = el.parentElement;
+          if (par) {
+            el.style.left = (el.offsetLeft / par.offsetWidth) * 100 + "%";
+            el.style.top = (el.offsetTop / par.offsetHeight) * 100 + "%";
+          }
+        }
+      };
+
+      window.addItem = function (
+        type,
+        content,
+        x = 35,
+        y = 40,
+        customSize = null,
+      ) {
+        const div = document.createElement("div");
+        div.className = "draggable-item";
+        div.style.left = x + "%";
+        div.style.top = y + "%";
+        div.style.pointerEvents = "auto";
+
+        if (type === "sticker") {
+          const img = document.createElement("img");
+          (async () => {
+            if (content.startsWith("data:image")) {
+              img.src = content;
+            } else {
+              img.src = await toBase64(content);
+            }
+          })();
+          img.className = "sticker-img";
+          const size = customSize || Math.floor(Math.random() * 40 + 60);
+          img.style.width = size + "px";
+          img.style.height = "auto";
+          div.appendChild(img);
+
+          // Resize handle
+          const resizeHandle = document.createElement("div");
+          resizeHandle.className = "resize-handle";
+          resizeHandle.title = "Drag to resize";
+          div.appendChild(resizeHandle);
+
+          // Resize drag logic
+          resizeHandle.addEventListener("pointerdown", (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            resizeHandle.setPointerCapture(e.pointerId);
+            const startX = e.clientX;
+            const startW = img.offsetWidth;
+            const sc = window.getScaleFactor();
+
+            function onMove(ev) {
+              const dx = (ev.clientX - startX) / sc;
+              const newW = Math.max(30, startW + dx);
+              img.style.width = newW + "px";
+              img.style.height = "auto";
+            }
+            function onUp() {
+              resizeHandle.removeEventListener("pointermove", onMove);
+              resizeHandle.removeEventListener("pointerup", onUp);
+            }
+            resizeHandle.addEventListener("pointermove", onMove);
+            resizeHandle.addEventListener("pointerup", onUp);
+          });
+        } else {
+          const span = document.createElement("span");
+          span.className = "custom-text";
+          span.innerText = content;
+          span.style.fontFamily = appState.currentFont;
+          span.style.color = appState.currentColor;
+          div.appendChild(span);
+        }
+
+        const del = document.createElement("div");
+        del.className = "delete-btn";
+        del.innerText = "✕";
+        del.onpointerdown = (e) => {
+          e.stopPropagation();
+          div.remove();
+        };
+        div.appendChild(del);
+
+        window.makeDraggable(div);
+        overlayLayer.appendChild(div);
+      };
+
+      /* ════════════════════════════════════════════
+       PRINT ANIMATION
+       ════════════════════════════════════════════ */
+      window.playPrintAnimation = function (imgUrl) {
+        const ov = document.getElementById("printAnimationOverlay");
+        const ph = document.getElementById("animPhoto");
+        ov.classList.remove("active", "printing");
+        ph.style.transition = "none";
+        ph.style.top = "-400px";
+        ph.src = imgUrl;
+        void ph.offsetWidth;
+        ov.classList.add("active");
+        ph.style.transition = "top 2.5s cubic-bezier(0.25,1,0.5,1)";
+        setTimeout(() => ov.classList.add("printing"), 50);
+        setTimeout(() => {
+          ov.classList.remove("active", "printing");
+          ph.style.top = "-400px";
+        }, 4000);
+      };
+
+      /* ════════════════════════════════════════════
+       CANVAS GENERATION
+       ════════════════════════════════════════════ */
+      async function generateFinalCanvas() {
+        if (appState.photos.length === 0) throw new Error("No photos");
+        await document.fonts.ready;
+
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const SCALE = 3;
+        const nf = appState.noFrame;
+
+        let W = 340,
+          H = nf ? 340 : 360;
+        if (appState.layout === "single") {
+          W = 320;
+          H = nf ? 320 : 375;
+        }
+        if (appState.layout === "photostrip") {
+          W = 160;
+          H = nf ? 496 : 530;
+        }
+
+        canvas.width = W * SCALE;
+        canvas.height = H * SCALE;
+        ctx.scale(SCALE, SCALE);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+
+        // Background
+        if (!nf) {
+          ctx.fillStyle = appState.currentFrameColor;
+          ctx.fillRect(0, 0, W, H);
+        }
+
+        // Load images
+        const imgs = await Promise.all(
+          appState.photos.map(
+            (src) =>
+              new Promise((res) => {
+                const i = new Image();
+                i.crossOrigin = "anonymous";
+                i.referrerPolicy = "no-referrer";
+                i.onload = () => res(i);
+                i.onerror = () => res(null);
+                i.src = src;
+              }),
+          ),
+        );
+
+        // Draw photos
+        imgs.forEach((img, i) => {
+          if (!img) return;
+          let dx, dy, dw, dh;
+          const gap = 8;
+
+          if (nf) {
+            if (appState.layout === "single") {
+              dw = 320;
+              dh = 320;
+              dx = 0;
+              dy = 0;
+            } else if (appState.layout === "grid") {
+              const c = i % 2,
+                r = Math.floor(i / 2);
+              dw = (340 - 4) / 2;
+              dh = dw;
+              dx = c * (dw + 4);
+              dy = r * (dh + 4);
+            } else if (appState.layout === "photostrip") {
+              dw = 160;
+              dh = 160;
+              dx = 0;
+              dy = i * (160 + gap);
+            }
+          } else if (appState.layout === "single") {
+            dw = 296;
+            dh = 296;
+            dx = 12;
+            dy = 12;
+          } else if (appState.layout === "grid") {
+            const c = i % 2,
+              r = Math.floor(i / 2);
+            dw = (340 - 30 - gap) / 2;
+            dh = dw;
+            dx = 15 + c * (dw + gap);
+            dy = 15 + r * (dh + gap);
+          } else if (appState.layout === "photostrip") {
+            dw = 140;
+            dh = 140;
+            dx = 10;
+            dy = 10 + i * (140 + gap);
+          }
+
+          ctx.filter = appState.currentFilter;
+          const sA = img.width / img.height,
+            dA = dw / dh;
+          let sx = 0,
+            sy = 0,
+            sw = img.width,
+            sh = img.height;
+          if (sA > dA) {
+            sw = img.height * dA;
+            sx = (img.width - sw) / 2;
+          } else {
+            sh = img.width / dA;
+            sy = (img.height - sh) / 2;
+          }
+          ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
+          ctx.filter = "none";
+        });
+
+        // Draw stickers
+        const frame = document.getElementById("polaroid");
+        const fW = frame.offsetWidth;
+        document.querySelectorAll(".draggable-item").forEach((item) => {
+          let lp = parseFloat(item.style.left) / 100 || 0;
+          let tp = parseFloat(item.style.top) / 100 || 0;
+          const x = lp * W,
+            y = tp * H;
+          const img = item.querySelector("img");
+          if (img) {
+            const ratio = img.offsetWidth / fW;
+            const dw = W * ratio;
+            const dh = dw * (img.naturalHeight / img.naturalWidth || 1);
+            ctx.drawImage(img, x, y, dw, dh);
+          }
+          const span = item.querySelector("span");
+          if (span) {
+            const fs =
+              parseFloat(window.getComputedStyle(span).fontSize) * (W / fW);
+            ctx.font = `400 ${fs}px "${appState.currentFont}"`;
+            ctx.fillStyle = appState.currentColor;
+            ctx.textBaseline = "top";
+            ctx.fillText(span.innerText, x, y);
+          }
+        });
+
+        // Branding
+        if (!nf) {
+          const dark =
+            appState.currentFrameColor === "#1a1a1a" ||
+            appState.currentFrameColor === "#37474f";
+          ctx.font = 'bold 7px "Courier New", monospace';
+          ctx.fillStyle = dark ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.35)";
+          ctx.textAlign = "right";
+          ctx.fillText("pixelloop.com", W - 14, H - 13);
+        }
+        return canvas;
+      }
+
+      /* ════════════════════════════════════════════
+       DOWNLOAD & SHARE
+       ════════════════════════════════════════════ */
+      window.downloadImage = async function () {
+        try {
+          const canvas = await generateFinalCanvas();
+          const url = canvas.toDataURL("image/png", 1.0);
+          window.playPrintAnimation(url);
+          setTimeout(() => {
+            const a = document.createElement("a");
+            a.download = `polaroid-${Date.now()}.png`;
+            a.href = url;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }, 1500);
+        } catch (e) {
+          console.error(e);
+          alert("Download failed: " + e.message);
+        }
+      };
+
+      window.shareImage = async function () {
+        try {
+          const canvas = await generateFinalCanvas();
+          canvas.toBlob(async (blob) => {
+            if (!blob) return alert("Could not create image");
+            const file = new File([blob], "my-polaroid.png", {
+              type: "image/png",
+            });
+            if (
+              navigator.share &&
+              navigator.canShare &&
+              navigator.canShare({ files: [file] })
+            ) {
+              await navigator.share({
+                files: [file],
+                title: "My Polaroid",
+                text: "Made with Pixelloop 📸",
+              });
+            } else {
+              window.downloadImage();
+            }
+          });
+        } catch (e) {
+          console.error(e);
+          window.downloadImage();
+        }
+      };
+    </script>
+  </body>
+</html>

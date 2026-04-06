@@ -1,0 +1,221 @@
+:root {
+  --color-vintage-brown: #d1b49a;
+  --color-dark-brown: #4a382e;
+  --color-paper-light: #f7f3e8;
+  --color-accent-red: #d9534f;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+  font-family: "Cabin", sans-serif;
+  background: var(--color-vintage-brown);
+  overflow: hidden;
+}
+h2,
+h3,
+h4 {
+  color: var(--color-dark-brown);
+  text-transform: uppercase;
+}
+.content-wrapper {
+  width: 90%;
+  max-width: 1100px;
+  padding: 20px;
+  text-align: center;
+}
+
+/* screens */
+.screen {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  inset: 0;
+  text-align: center;
+  transition: opacity 0.5s;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 1;
+  overflow-y: auto;
+}
+.screen.active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 10;
+}
+
+/* start */
+#start-screen {
+  background: url("pita.jpg") center/cover no-repeat;
+}
+#start-screen .start-button {
+  background: transparent;
+  border: none;
+  padding: 15px 40px;
+  font-family: "Homemade Apple", cursive;
+  font-size: 2.5em;
+  color: transparent;
+  position: absolute;
+  left: 50%;
+  bottom: 15%;
+  transform: translateX(-50%);
+  width: 300px;
+  height: 80px;
+  cursor: pointer;
+  z-index: 99;
+}
+
+/* steps */
+#steps-screen {
+  background: url("howuse.jpeg") center/cover no-repeat;
+  cursor: pointer;
+}
+
+/* camera */
+#camera-screen {
+  background: #e6d3c2;
+}
+.camera-layout {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  gap: 20px;
+}
+.camera-window {
+  width: 600px;
+  height: 450px;
+  background: var(--color-vintage-brown);
+  border: 5px solid var(--color-dark-brown);
+  box-shadow: 10px 10px 0 var(--color-dark-brown);
+  position: relative;
+  overflow: hidden;
+}
+.camera-header {
+  background: var(--color-dark-brown);
+  color: var(--color-paper-light);
+  padding: 5px 10px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8em;
+}
+#camera-view-port {
+  position: relative;
+  width: 100%;
+  height: calc(100% - 30px);
+  background: #222;
+  overflow: hidden;
+}
+
+/* video */
+#video-feed {
+  width: 100%;
+  height: 100%;
+  transform: scaleX(-1);
+  object-fit: cover;
+  background: #111;
+}
+
+/* capture button */
+#capture-manual-btn {
+  position: absolute;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  z-index: 100;
+  padding: 15px 30px;
+  font-size: 1.5em;
+  background: var(--color-accent-red);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+#capture-manual-btn:disabled {
+  background: #aaa;
+  cursor: default;
+}
+
+/* after session overlay */
+#action-buttons {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+}
+.final-action-btn {
+  padding: 15px 30px;
+  margin: 10px;
+  font-size: 1.2em;
+  font-weight: 700;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background: var(--color-accent-red);
+  color: #fff;
+}
+.next-action {
+  background: var(--color-dark-brown);
+}
+.final-action-btn:hover {
+  filter: brightness(1.05);
+}
+
+/* preview 2x3 */
+.photo-strip-preview {
+  width: 200px;
+  height: 450px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(3, 1fr);
+  gap: 5px;
+  border: 2px solid var(--color-dark-brown);
+  padding: 5px;
+  background: var(--color-paper-light);
+}
+.strip-frame {
+  width: 100%;
+  height: 100%;
+  background: #ccc;
+  border: 1px dashed var(--color-dark-brown);
+}
+
+@media (max-width: 768px) {
+  .camera-layout {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+  }
+  .camera-window {
+    width: 95%;
+    height: 300px;
+  }
+  .photo-strip-preview {
+    width: 95%;
+    height: 200px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr 1fr;
+  }
+}
+@supports (aspect-ratio: 4/3) {
+  .camera-window {
+    width: min(95vw, 720px);
+    aspect-ratio: 4/3;
+    height: auto;
+  }
+  #camera-view-port {
+    height: 100%;
+  }
+}
